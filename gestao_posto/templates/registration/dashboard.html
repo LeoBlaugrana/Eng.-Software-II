@@ -285,6 +285,7 @@
                 {% endfor %}
             </tbody>
         </table>
+        <h2>Cadastrar Veículo</h2>
         <form class="vehicle-form" id="add-veiculo-form" method="post" action="{% url 'add_veiculo' %}">
             {% csrf_token %}
             <div class="fields">
@@ -315,7 +316,7 @@
                 </div>
             </div>
             <div class="image">
-                <img src="{% static 'images/vehicle-placeholder.png' %}" alt="Imagem do Veículo" width="150">
+                <img src="{% static 'images/passenger car.png' %}" alt="Imagem do Veículo" width="150">
             </div>
             <button type="submit">Cadastrar Veículo</button>
         </form>
