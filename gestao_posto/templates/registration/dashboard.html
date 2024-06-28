@@ -115,6 +115,48 @@
         background-color: #3492FF;
         color: white;
     }
+    .action-icons {
+        display: flex;
+        gap: 10px;
+    }
+    .action-icons a {
+        color: #3492FF;
+        cursor: pointer;
+        text-decoration: none;
+    }
+    .vehicle-form {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+    .vehicle-form .fields {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .vehicle-form .image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+    }
+    .vehicle-form button {
+        align-self: flex-end;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .vehicle-form button:hover {
+        background-color: #45a049;
+    }
 </style>
 
 <div class="sidebar">
@@ -190,6 +232,93 @@
             </tbody>
         </table>
     </div>
+
+    <div id="veiculos" class="section" style="display: none;">
+        <h1>Veículos</h1>
+        <div class="filters">
+            <div>
+                <label for="ano">Ano</label>
+                <input type="number" id="ano" name="ano">
+            </div>
+            <div>
+                <label for="placa">Placa</label>
+                <input type="text" id="placa" name="placa">
+            </div>
+            <div>
+                <label for="marca">Marca</label>
+                <input type="text" id="marca" name="marca">
+            </div>
+            <div>
+                <label for="motorista">Motorista</label>
+                <select id="motorista" name="motorista">
+                    <option value="">Todos</option>
+                    {% for motorista in motoristas %}
+                        <option value="{{ motorista.id }}">{{ motorista.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Ano</th>
+                    <th>Placa</th>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Motorista</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for veiculo in veiculos %}
+                <tr>
+                    <td>{{ veiculo.ano }}</td>
+                    <td>{{ veiculo.placa }}</td>
+                    <td>{{ veiculo.marca }}</td>
+                    <td>{{ veiculo.modelo }}</td>
+                    <td>{{ veiculo.motorista.nome }}</td>
+                    <td class="action-icons">
+                        <a href="#" return false;>&#9998;</a>
+                        <a href="#" return false;>&#128465;</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="vehicle-form">
+            <div class="fields">
+                <div>
+                    <label for="novo-ano">Ano</label>
+                    <input type="number" id="novo-ano" name="novo-ano">
+                </div>
+                <div>
+                    <label for="nova-placa">Placa</label>
+                    <input type="text" id="nova-placa" name="nova-placa">
+                </div>
+                <div>
+                    <label for="nova-marca">Marca</label>
+                    <input type="text" id="nova-marca" name="nova-marca">
+                </div>
+                <div>
+                    <label for="novo-modelo">Modelo</label>
+                    <input type="text" id="novo-modelo" name="novo-modelo">
+                </div>
+                <div>
+                    <label for="novo-motorista">Motorista</label>
+                    <select id="novo-motorista" name="novo-motorista">
+                        <option value="">Selecione</option>
+                        {% for motorista in motoristas %}
+                            <option value="{{ motorista.id }}">{{ motorista.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="image">
+                <img src="{% static 'images/vehicle-placeholder.png' %}" alt="Imagem do Veículo" width="150">
+            </div>
+            <button type="button" onclick="addVeiculo()">Cadastrar Veículo</button>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -202,6 +331,18 @@
 
     function downloadPDF() {
         // Implementar a funcionalidade de download de PDF
+    }
+
+    function editVeiculo(id) {
+        // Implementar a funcionalidade de editar veículo
+    }
+
+    function deleteVeiculo(id) {
+        // Implementar a funcionalidade de excluir veículo
+    }
+
+    function addVeiculo() {
+        // Implementar a funcionalidade de adicionar veículo
     }
 
     // Mostrar a seção Histórico por padrão

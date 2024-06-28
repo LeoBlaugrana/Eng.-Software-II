@@ -20,6 +20,19 @@ def dashboard(request):
     }
     return render(request, 'registration/dashboard.html', context)
 
+@login_required
+def add_veiculo(request):
+    if request.method == 'POST':
+        ano = request.POST['ano']
+        placa = request.POST['placa']
+        marca = request.POST['marca']
+        modelo = request.POST['modelo']
+        motorista_id = request.POST['motorista']
+        motorista = Motorista.objects.get(id=motorista_id)
+        veiculo = Veiculo(ano=ano, placa=placa, marca=marca, modelo=modelo, motorista=motorista)
+        veiculo.save()
+        return redirect('dashboard')
+
 def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
