@@ -5,6 +5,7 @@ from .forms import UserRegisterForm
 from abastecimentos.models import Historico
 from veiculos.models import Veiculo
 from clientes.models import Motorista
+from django.http import JsonResponse
 
 @login_required
 def dashboard(request):
@@ -31,7 +32,33 @@ def add_veiculo(request):
         motorista = Motorista.objects.get(id=motorista_id)
         veiculo = Veiculo(ano=ano, placa=placa, marca=marca, modelo=modelo, motorista=motorista)
         veiculo.save()
-        return redirect('dashboard')
+        return JsonResponse({
+            'success': True,
+            'veiculo': {
+                'id': veiculo.id,
+                'ano': veiculo.ano,
+                'placa': veiculo.placa,
+                'marca': veiculo.marca,
+                'modelo': veiculo.modelo,
+                'motorista': veiculo.motorista.nome,
+            }
+        })
+    return JsonResponse({'success': False})
+
+@login_required
+def add_motorista(request):
+    if request.method == 'POST':
+        nome = request.POST['nome']
+        motorista = Motorista(nome=nome)
+        motorista.save()
+        return JsonResponse({
+            'success': True,
+            'motorista': {
+                'id': motorista.id,
+                'nome': motorista.nome,
+            }
+        })
+    return JsonResponse({'success': False})
 
 def register(request):
     if request.method == 'POST':

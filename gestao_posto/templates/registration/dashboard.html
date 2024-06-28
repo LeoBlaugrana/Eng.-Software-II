@@ -269,7 +269,7 @@
                     <th>Ação</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="veiculo-tabela-corpo">
                 {% for veiculo in veiculos %}
                 <tr>
                     <td>{{ veiculo.ano }}</td>
@@ -278,34 +278,35 @@
                     <td>{{ veiculo.modelo }}</td>
                     <td>{{ veiculo.motorista.nome }}</td>
                     <td class="action-icons">
-                        <a href="#" return false;>&#9998;</a>
-                        <a href="#" return false;>&#128465;</a>
+                        <a href="#" onclick="editVeiculo({{ veiculo.id }}); return false;">&#9998;</a>
+                        <a href="#" onclick="deleteVeiculo({{ veiculo.id }}); return false;">&#128465;</a>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-        <div class="vehicle-form">
+        <form class="vehicle-form" id="add-veiculo-form" method="post" action="{% url 'add_veiculo' %}">
+            {% csrf_token %}
             <div class="fields">
                 <div>
                     <label for="novo-ano">Ano</label>
-                    <input type="number" id="novo-ano" name="novo-ano">
+                    <input type="number" id="novo-ano" name="ano" required>
                 </div>
                 <div>
                     <label for="nova-placa">Placa</label>
-                    <input type="text" id="nova-placa" name="nova-placa">
+                    <input type="text" id="nova-placa" name="placa" required>
                 </div>
                 <div>
                     <label for="nova-marca">Marca</label>
-                    <input type="text" id="nova-marca" name="nova-marca">
+                    <input type="text" id="nova-marca" name="marca" required>
                 </div>
                 <div>
                     <label for="novo-modelo">Modelo</label>
-                    <input type="text" id="novo-modelo" name="novo-modelo">
+                    <input type="text" id="novo-modelo" name="modelo" required>
                 </div>
                 <div>
                     <label for="novo-motorista">Motorista</label>
-                    <select id="novo-motorista" name="novo-motorista">
+                    <select id="novo-motorista" name="motorista" required>
                         <option value="">Selecione</option>
                         {% for motorista in motoristas %}
                             <option value="{{ motorista.id }}">{{ motorista.nome }}</option>
@@ -316,8 +317,36 @@
             <div class="image">
                 <img src="{% static 'images/vehicle-placeholder.png' %}" alt="Imagem do Veículo" width="150">
             </div>
-            <button type="button" onclick="addVeiculo()">Cadastrar Veículo</button>
-        </div>
+            <button type="submit">Cadastrar Veículo</button>
+        </form>
+    </div>
+
+    <div id="motoristas" class="section" style="display: none;">
+        <h1>Motoristas</h1>
+        <form id="add-motorista-form" method="post" action="{% url 'add_motorista' %}">
+            {% csrf_token %}
+            <div>
+                <label for="nome-motorista">Nome</label>
+                <input type="text" id="nome-motorista" name="nome" required>
+            </div>
+            <button type="submit">Cadastrar Motorista</button>
+        </form>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for motorista in motoristas %}
+                <tr>
+                    <td>{{ motorista.id }}</td>
+                    <td>{{ motorista.nome }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -341,11 +370,67 @@
         // Implementar a funcionalidade de excluir veículo
     }
 
-    function addVeiculo() {
-        // Implementar a funcionalidade de adicionar veículo
-    }
+    document.getElementById('add-veiculo-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const formData = new FormData(this);
 
-    // Mostrar a seção Histórico por padrão
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${data.veiculo.ano}</td>
+                    <td>${data.veiculo.placa}</td>
+                    <td>${data.veiculo.marca}</td>
+                    <td>${data.veiculo.modelo}</td>
+                    <td>${data.veiculo.motorista}</td>
+                    <td class="action-icons">
+                        <a href="#" onclick="editVeiculo(${data.veiculo.id}); return false;">&#9998;</a>
+                        <a href="#" onclick="deleteVeiculo(${data.veiculo.id}); return false;">&#128465;</a>
+                    </td>
+                `;
+                document.getElementById('veiculo-tabela-corpo').appendChild(newRow);
+                this.reset();
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+    document.getElementById('add-motorista-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const formData = new FormData(this);
+
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${data.motorista.id}</td>
+                    <td>${data.motorista.nome}</td>
+                `;
+                document.querySelector('.section#motoristas tbody').appendChild(newRow);
+                this.reset();
+                // Atualizar a lista de motoristas no formulário de veículos
+                const motoristaSelect = document.getElementById('novo-motorista');
+                const newOption = document.createElement('option');
+                newOption.value = data.motorista.id;
+                newOption.textContent = data.motorista.nome;
+                motoristaSelect.appendChild(newOption);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
     document.addEventListener('DOMContentLoaded', () => {
         showSection('historico');
     });
