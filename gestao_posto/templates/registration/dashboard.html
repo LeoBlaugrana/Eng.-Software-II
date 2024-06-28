@@ -1,0 +1,213 @@
+{% extends "base_generic.html" %}
+
+{% load static %}
+
+{% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+    }
+    .sidebar {
+        width: 290px;
+        height: 100vh;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 0;
+        background: linear-gradient(to bottom, #3492FF, #00132A);
+    }
+    .sidebar .logo {
+        margin-bottom: 30px;
+    }
+    .sidebar .logo img {
+        width: auto;
+        height: auto;
+    }
+    .sidebar .menu {
+        padding-top: 200px;
+        width: 100%;
+    }
+    .sidebar .menu a {
+        display: block;
+        color: white;
+        text-decoration: none;
+        padding: 10px 20px;
+        margin: 10px 0;
+        text-align: left;
+        font-size: 20px;
+    }
+    .sidebar .menu a:hover {
+        background-color: #004bad;
+    }
+    .sidebar .profile {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .sidebar .profile img {
+        padding-top: 250px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+    }
+    .sidebar .profile p {
+        margin: 5px 0;
+        font-size: 20px;
+    }
+    .sidebar .logout-btn {
+        width: 60px;
+        text-align: center;
+        padding: 10px 0;
+        background-color: #ffffff00;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 25px;
+    }
+    .content {
+        flex-grow: 1;
+        padding: 20px;
+        text-align: left;
+    }
+    .filters {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+    .filters div {
+        margin-right: 20px;
+    }
+    .filters label {
+        display: block;
+        margin-bottom: 5px;
+    }
+    .filters input,
+    .filters select {
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    .filters button {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .filters button:hover {
+        background-color: #45a049;
+    }
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    .table th, .table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+    .table th {
+        background-color: #3492FF;
+        color: white;
+    }
+</style>
+
+<div class="sidebar">
+    <div class="logo">
+        <img src="{% static 'images/camburiti 2.png' %}" alt="Logotipo">
+    </div>
+    <div class="menu">
+        <a href="#" onclick="showSection('historico')">Histórico</a>
+        <a href="#" onclick="showSection('veiculos')">Veículos</a>
+        <a href="#" onclick="showSection('motoristas')">Motoristas</a>
+        <a href="#" onclick="showSection('postos')">Postos</a>
+    </div>
+    <div class="profile">
+        <img src="{% static 'images/noprofile.png' %}" alt="Foto de Perfil">
+        <p>{{ user.username }}</p>
+    </div>
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="logout-btn">Sair</button>
+    </form>
+</div>
+
+<div class="content">
+    <div id="historico" class="section">
+        <h1>Histórico</h1>
+        <div class="filters">
+            <div>
+                <label for="date">Data</label>
+                <input type="date" id="date" name="date">
+            </div>
+            <div>
+                <label for="veiculo">Veículo</label>
+                <select id="veiculo" name="veiculo">
+                    <option value="">Todos</option>
+                    {% for veiculo in veiculos %}
+                        <option value="{{ veiculo.id }}">{{ veiculo.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="motorista">Motorista</label>
+                <select id="motorista" name="motorista">
+                    <option value="">Todos</option>
+                    {% for motorista in motoristas %}
+                        <option value="{{ motorista.id }}">{{ motorista.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <button onclick="downloadPDF()">Download</button>
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Veículo</th>
+                    <th>Motorista</th>
+                    <th>Litros</th>
+                    <th>Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in historico %}
+                <tr>
+                    <td>{{ item.data }}</td>
+                    <td>{{ item.veiculo.nome }}</td>
+                    <td>{{ item.motorista.nome }}</td>
+                    <td>{{ item.litros }}</td>
+                    <td>{{ item.valor }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function showSection(sectionId) {
+        const sections = document.querySelectorAll('.section');
+        sections.forEach(section => {
+            section.style.display = section.id === sectionId ? 'block' : 'none';
+        });
+    }
+
+    function downloadPDF() {
+        // Implementar a funcionalidade de download de PDF
+    }
+
+    // Mostrar a seção Histórico por padrão
+    document.addEventListener('DOMContentLoaded', () => {
+        showSection('historico');
+    });
+</script>
+
+{% endblock %}

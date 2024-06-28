@@ -44,12 +44,16 @@
         background-color: #45a049;
     }
 </style>
+
 <div class="login-container">
     <h2>Bem-vindo ao Sistema de Gestão de Postos de Combustível</h2>
     <form method="post" class="login-form">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Login</button>
+        <div class="btn-container">
+            <button type="submit">Login</button>
+            <a href="{% url 'register' %}">Cadastrar</a>
+        </div>
     </form>
     <p><a href="{% url 'password_reset' %}" style="color: #8898a8;">Esqueceu a senha?</a></p>
 </div>
